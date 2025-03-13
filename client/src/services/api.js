@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API requests
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://couponx.onrender.com';
 
 // Create axios instance with default config
 const api = axios.create({
