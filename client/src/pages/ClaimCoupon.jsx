@@ -65,40 +65,39 @@ const ClaimCoupon = () => {
       setCode("");
     }
   };
-  
 
   return (
     <div className="max-w-3xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-3 text-white">
-          Claim Your Coupon
-        </h1>
-        <p className="text-gray-300">
-          Enter your coupon code below to claim your discount. Each code can
-          only be used once.
-        </p>
+        <h1 className="text-3xl font-bold mb-3 text-white">Claim Your Coupon</h1>
+        <p className="text-gray-300">Enter your coupon code below to claim your discount. Each code can only be used once.</p>
       </div>
 
-      {/* Display User's IP */}
-      {/* {userIp && (
-        <div className="text-center mb-4">
-          <p className="text-gray-400 text-sm">
-            Your IP Address: <span className="text-white font-mono">{userIp}</span>
-          </p>
-        </div>
-      )} */}
+      {/* Display Available Coupons */}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+        <h2 className="text-xl font-semibold text-white mb-4">Available Coupons</h2>
+        {loading ? (
+          <p className="text-gray-400">Loading coupons...</p>
+        ) : error ? (
+          <p className="text-red-400">{error}</p>
+        ) : coupons.length > 0 ? (
+          <ul className="list-disc list-inside text-gray-300">
+            {coupons.map((coupon, index) => (
+              <li key={index} className="text-white font-mono">{coupon.code}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-400">No available coupons at the moment.</p>
+        )}
+      </div>
 
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
         {success ? (
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-4 text-green-400">Success!</h3>
-            <p className="text-gray-300 mb-4">
-              You've successfully claimed the coupon:
-            </p>
+            <p className="text-gray-300 mb-4">You've successfully claimed the coupon:</p>
             <div className="bg-gray-700 p-4 rounded-md mb-6 max-w-xs mx-auto">
-              <span className="text-xl font-mono text-white">
-                {claimedCode}
-              </span>
+              <span className="text-xl font-mono text-white">{claimedCode}</span>
             </div>
             <button
               onClick={() => setSuccess(false)}
@@ -109,13 +108,9 @@ const ClaimCoupon = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <h2 className="text-2xl font-semibold mb-6 text-center text-white">
-              Claim Your Coupon
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center text-white">Claim Your Coupon</h2>
             <div className="space-y-2">
-              <label htmlFor="claimCode" className="block text-gray-300">
-                Enter Coupon Code
-              </label>
+              <label htmlFor="claimCode" className="block text-gray-300">Enter Coupon Code</label>
               <input
                 type="text"
                 id="claimCode"
