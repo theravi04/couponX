@@ -39,6 +39,8 @@ const ClaimCoupon = () => {
         setUserIp(data.ip);
       } catch (error) {
         console.error("Failed to fetch IP:", error);
+        // Set a placeholder or handle the error gracefully
+        setUserIp("unknown");
       }
     };
 
@@ -78,14 +80,7 @@ const ClaimCoupon = () => {
         </p>
       </div>
 
-      {/* Display User's IP */}
-      {/* {userIp && (
-        <div className="text-center mb-4">
-          <p className="text-gray-400 text-sm">
-            Your IP Address: <span className="text-white font-mono">{userIp}</span>
-          </p>
-        </div>
-      )} */}
+      {/* User IP is needed for the API but doesn't need to be displayed */}
 
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
         {success ? (
@@ -136,12 +131,18 @@ const ClaimCoupon = () => {
           </form>
         )}
       </div>
+      
       {/* Coupon List Section */}
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4 text-white">
           Existing Coupons
         </h2>
-        {fetching ? (
+        {error && (
+          <div className="bg-red-900/30 border border-red-700 text-red-300 p-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        {loading ? (
           <p className="text-gray-400 text-center">Loading coupons...</p>
         ) : coupons.length === 0 ? (
           <p className="text-gray-400 text-center">No coupons available.</p>
