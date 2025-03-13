@@ -13,14 +13,12 @@ const api = axios.create({
 
 // Coupon API methods
 export const couponApi = {
-  // Get all coupons
   getAllCoupons: () => api.get('/coupons/all'),
-  
-  // Add new coupon
+
   addCoupon: (code) => api.post('/coupons/add', { code }),
-  
-  // Claim a coupon
-  claimCoupon: (code) => api.post('/coupons/claim', { code }),
+
+  claimCoupon: (code, ip) => api.post('/coupons/claim', { code, ip }), // Send IP along with coupon code
 };
+
 
 export default api;

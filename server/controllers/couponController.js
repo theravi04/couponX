@@ -3,10 +3,10 @@ import ClaimLog from '../models/claimLogModel.js';
 
 export const claimCoupon = async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, ip } = req.body; // Get IP from frontend
 
-    if(!code){
-        return res.status(400).json({ message: 'Coupon code is required' });
+    if (!code) {
+      return res.status(400).json({ message: 'Coupon code is required' });
     }
 
     const coupon = await Coupon.findOne({ code });
@@ -22,20 +22,19 @@ export const claimCoupon = async (req, res) => {
     coupon.claimed = true;
     await coupon.save();
 
-    // Log the claim
-    const { ip, cookie } = req.claimData;
+    // Log the claim with the IP
+    const { cookie } = req.claimData;
     await ClaimLog.create({ ip, cookie });
 
-    // Set a cookie to track the claim
     res.cookie('claim_cookie', cookie, { httpOnly: true, maxAge: 3600 * 1000 });
 
     res.status(200).json({ message: 'Coupon claimed successfully', coupon: coupon.code });
-
   } catch (error) {
     console.error('Error claiming coupon:', error);
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 export const addCoupon = async (req, res) => {
   try {

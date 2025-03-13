@@ -6,6 +6,7 @@ const ClaimCoupon = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userIp, setUserIp] = useState(""); // State to store user IP
 
   const [code, setCode] = useState("");
   const [claimLoading, setClaimLoading] = useState(false);
@@ -30,16 +31,30 @@ const ClaimCoupon = () => {
     fetchCoupons();
   }, []);
 
+  useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const response = await fetch("https://api64.ipify.org?format=json");
+        const data = await response.json();
+        setUserIp(data.ip);
+      } catch (error) {
+        console.error("Failed to fetch IP:", error);
+      }
+    };
+
+    fetchIp();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!code.trim()) {
       toast.error("Please enter a coupon code");
       return;
     }
-
+  
     setClaimLoading(true);
     try {
-      const response = await couponApi.claimCoupon(code);
+      const response = await couponApi.claimCoupon(code, userIp); // Pass userIp to API
       setClaimedCode(response.data.coupon);
       setSuccess(true);
       toast.success("Coupon claimed successfully!");
@@ -50,6 +65,7 @@ const ClaimCoupon = () => {
       setCode("");
     }
   };
+  
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -62,6 +78,15 @@ const ClaimCoupon = () => {
           only be used once.
         </p>
       </div>
+
+      {/* Display User's IP */}
+      {/* {userIp && (
+        <div className="text-center mb-4">
+          <p className="text-gray-400 text-sm">
+            Your IP Address: <span className="text-white font-mono">{userIp}</span>
+          </p>
+        </div>
+      )} */}
 
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
         {success ? (
@@ -111,66 +136,6 @@ const ClaimCoupon = () => {
             </div>
           </form>
         )}
-      </div>
-
-      <div className="bg-gray-800 p-6 rounded-lg mt-10">
-        <h2 className="text-xl font-semibold mb-4 text-white">
-          Available Coupons
-        </h2>
-
-        {loading ? (
-          <div className="text-center py-4">
-            <p className="text-gray-400">Loading coupons...</p>
-          </div>
-        ) : error ? (
-          <div className="text-center py-4">
-            <p className="text-red-400">{error}</p>
-          </div>
-        ) : coupons.length === 0 ? (
-          <div className="text-center py-4">
-            <p className="text-gray-400">No coupons available at this time.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="py-2 px-4 text-left text-purple-400">Code</th>
-                  <th className="py-2 px-4 text-left text-purple-400">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {coupons.map((coupon, index) => (
-                  <tr
-                    key={coupon.id || coupon.code || index}
-                    className="border-b border-gray-700 hover:bg-gray-700"
-                  >
-                    <td className="py-3 px-4 text-white font-mono">
-                      {coupon.code}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          coupon.claimed === false
-                            ? "bg-green-900 text-green-300"
-                            : "bg-gray-700 text-gray-400"
-                        }`}
-                      >
-                        {coupon.claimed === false ? "Available" : "Claimed"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <p className="text-gray-400 mt-4 text-sm italic">
-          Note: You can only claim one coupon per hour.
-        </p>
       </div>
     </div>
   );
