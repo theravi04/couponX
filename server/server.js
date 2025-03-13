@@ -10,7 +10,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-  origin: "https://coupon-x-theravi04s-projects.vercel.app/",
+  origin: "https://coupon-x-theravi04s-projects.vercel.app",
   credentials: true 
 }));
 
