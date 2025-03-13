@@ -47,19 +47,29 @@ const ClaimCoupon = () => {
     fetchIp();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // Validate input first
     if (!code.trim()) {
       toast.error("Please enter a coupon code");
       return;
     }
-
+    
+    // Only set loading if validation passes
     setClaimLoading(true);
     try {
       const response = await couponApi.claimCoupon(code, userIp); // Pass userIp to API
       setClaimedCode(response.data.coupon);
       setSuccess(true);
       toast.success("Coupon claimed successfully!");
+      
+      // Refresh the coupon list after successful claim
+      try {
+        const couponsResponse = await couponApi.getAllCoupons();
+        setCoupons(couponsResponse.data.coupons || []);
+      } catch (err) {
+        console.error("Error refreshing coupons:", err);
+        // Don't show error for this since the main action succeeded
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to claim coupon");
     } finally {
@@ -102,7 +112,7 @@ const ClaimCoupon = () => {
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-6">
             <h2 className="text-2xl font-semibold mb-6 text-center text-white">
               Claim Your Coupon
             </h2>
@@ -123,12 +133,13 @@ const ClaimCoupon = () => {
               <button
                 type="submit"
                 disabled={claimLoading}
+                onClick={handleSubmit}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {claimLoading ? "Processing..." : "Claim Coupon"}
               </button>
             </div>
-          </form>
+          </div>
         )}
       </div>
       
